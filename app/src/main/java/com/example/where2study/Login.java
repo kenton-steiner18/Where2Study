@@ -25,7 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 /**
  * A login screen that offers login via email/password.
  */
-public class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity implements View.OnClickListener{
 
     private static final String TAG = "Login";
 
@@ -38,7 +38,7 @@ public class Login extends AppCompatActivity {
     // UI references.
     private EditText mEmail, mPassword;
     private Button mSignIn, mSignUp, changePassword;
-    private ProgressDialog mProgressDialog;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,22 +49,25 @@ public class Login extends AppCompatActivity {
 
 
         // Set up the login form.
-        mEmail = findViewById(R.id.field_email);
-        mPassword = findViewById(R.id.field_password);
-        //mProgressDialog= findViewById(R.id.progress_dialog);
+        mEmail = findViewById(R.id.editTextEmail);
+        mPassword = findViewById(R.id.editTextPassword);
+        progressDialog= new ProgressDialog(this);
         mSignIn = findViewById(R.id.sign_in);
         mSignUp = findViewById(R.id.sign_up);
 
         //Get Firebase auth instance
         mAuth = FirebaseAuth.getInstance();
+
+        mSignIn.setOnClickListener(this);
     }
 
 
     /**
      * Activity for creating a new account
      */
-    public void createAccount() {
+    public void createAccount(View v) {
         startActivity(new Intent(Login.this,SignUp.class));
+        Login.this.finish();
     }
 
     /**
@@ -72,57 +75,35 @@ public class Login extends AppCompatActivity {
      */
     private void signIn() {
         Log.d(TAG, "signIn:");
-        if (!validateForm()) {
-            return;
-        }
-        //showProgressDialog();
 
         // Initialize the email and password variables from the fields entered by the user
         String email = mEmail.getText().toString();
         String password = mPassword.getText().toString();
+
+        //Check if the fields are empty
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(this, "You must enter an email address", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "You must enter a password", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        //Display progress dialog if fields are not empty
+        progressDialog.setMessage("Logging in...");
+        progressDialog.show();
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
-                        //hideProgressDialog();
-
+                        progressDialog.dismiss();
                         if (task.isSuccessful()) {
                             onAuthSuccess(task.getResult().getUser());
                         } else {
                             Toast.makeText(Login.this, "Sign In Failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-    /**
-     * To create a new account
-     */
-    private void signUp() {
-        Log.d(TAG, "signUp");
-        if (!validateForm()) {
-            return;
-        }
-        //showProgressDialog();
-
-        // Initialize the email and password variables
-        String email = mEmail.getText().toString();
-        String password = mPassword.getText().toString();
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
-                        //hideProgressDialog();
-
-                        if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-                        } else {
-                            Toast.makeText(Login.this, "Sign Up Failed",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -135,77 +116,16 @@ public class Login extends AppCompatActivity {
      * @param user - the user who's account is currently being logged into
      */
     private void onAuthSuccess(FirebaseUser user) {
-        String username = getUsername(user.getEmail());
-
-        //Create a new User
-        //createUser(user.getUid(), username, user.getEmail());
 
         //Go to home screen for logged in users
-        startActivity(new Intent(this, HomeScreen.class));
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 
-    /**
-     * Takes a user's email and returns the username they can use to login
-     *
-     * @param email - the email address of the user
-     */
-    private String getUsername(String email) {
-        if (email.contains("@")) {
-            return email.split("@")[0];
-        } else {
-            return email;
-        }
+    @Override
+    public void onClick(View view) {
+        //calling register method on click
+        signIn();
     }
-
-
-
-    /**
-     * Validate the user entered a correct email and password during the sign up
-     */
-    private boolean validateForm() {
-        boolean valid = true;
-
-        if (TextUtils.isEmpty(mEmail.getText().toString())) {
-            mEmail.setError("Required.");
-            valid = false;
-        } else {
-            mEmail.setError(null);
-        }
-
-        if (TextUtils.isEmpty(mPassword.getText().toString())) {
-            mPassword.setError("Required.");
-            valid = false;
-        } else {
-            mPassword.setError(null);
-        }
-
-        return valid;
     }
-
-    /**
-     * Create a new User in the database
-     *
-     * @param username - string the user can use to login instead of email
-     * @param name - the user's name
-     * @param email - user's email address
-     */
-    private void createUser(String username, String name, String email) {
-        //User user = new User(name, email);
-
-        // Write is to the database
-        //mDatabase.child("users").child(username).setValue(user);
-    }
-
-    // On-click events that call signIn and signUp methods
-
-    public void onClick(View v) {
-        int i = v.getId();
-        if (i == R.id.sign_in) {
-            signIn();
-        } else if (i == R.id.sign_up) {
-            signUp();
-        }
-    }
-}
 

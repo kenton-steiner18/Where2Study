@@ -37,6 +37,9 @@
             android:name=".Login"
             android:parentActivityName=".HomeScreen" />
         <activity
+            android:name=".SignUp"
+            android:parentActivityName=".HomeScreen" />
+        <activity
             android:name=".BaseActivity"
             android:label="@string/title_activity_base"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -44,7 +47,6 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SignUp"></activity>
     </application>
 
 </manifest>

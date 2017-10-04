@@ -37,8 +37,8 @@
         android:text="@string/action_sign_in" />
 
     <Button
-        style="@style/Widget.AppCompat.Button"
         android:id="@+id/sign_up"
+        android:onClick="loadNewUser"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:text="@string/action_create_account" />

@@ -25,7 +25,13 @@ public class HomeScreen extends BaseActivity {
 
     // When the user hits the sign in button on the homescreen
     public void loadSignIn (View v) {
-        Intent intent = new Intent(HomeScreen.this, Login.class);
-        startActivity(intent);
+        Intent signin = new Intent(HomeScreen.this, Login.class);
+        startActivity(signin);
+    }
+
+    // When the user hits the New User button on the homescreen
+    public void loadNewUser(View v) {
+        Intent newUser = new Intent(HomeScreen.this, SignUp.class);
+        startActivity(newUser);
     }
 }
