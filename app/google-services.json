@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "649301712608",
+    "firebase_url": "https://where2study-ee70c.firebaseio.com",
+    "project_id": "where2study-ee70c",
+    "storage_bucket": "where2study-ee70c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:649301712608:android:8936bfadeae02c80",
+        "android_client_info": {
+          "package_name": "com.example.where2study"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "649301712608-6j547cr7to0utljn198sc4n8i51b5gdd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.where2study",
+            "certificate_hash": "34d82a6625b407fcd6a9fcaef7837c19fcae5213"
+          }
+        },
+        {
+          "client_id": "649301712608-g49379tie0mmoi8hm92mueqls6k1uolv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEaJZkUigT2gCMQVvG6CVElc7SSFUkyB4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "649301712608-g49379tie0mmoi8hm92mueqls6k1uolv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
