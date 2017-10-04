@@ -1,11 +1,12 @@
 package com.example.where2study;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 /**
  * A login screen that offers login via email/password.
  */
-public class Login extends BaseActivity implements View.OnClickListener {
+public class Login extends AppCompatActivity {
 
     private static final String TAG = "Login";
 
@@ -35,37 +36,35 @@ public class Login extends BaseActivity implements View.OnClickListener {
     private DatabaseReference mDatabase;
 
     // UI references.
-    private EditText mEmailField, mPasswordField;
-    private Button mSignIn, mSignUp;
+    private EditText mEmail, mPassword;
+    private Button mSignIn, mSignUp, changePassword;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_login);
 
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Set up the login form.
-        mEmailField = findViewById(R.id.field_email);
-        mPasswordField = findViewById(R.id.field_password);
+        mEmail = findViewById(R.id.field_email);
+        mPassword = findViewById(R.id.field_password);
+        //mProgressDialog= findViewById(R.id.progress_dialog);
         mSignIn = findViewById(R.id.sign_in);
         mSignUp = findViewById(R.id.sign_up);
 
-        // On-click listeners for the buttons on the homepage
-        mSignIn.setOnClickListener(this);
-        mSignUp.setOnClickListener(this);
+        //Get Firebase auth instance
+        mAuth = FirebaseAuth.getInstance();
     }
 
-    // Check if the User is currently logged in
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        if (mAuth.getCurrentUser() != null) {
-            onAuthSuccess(mAuth.getCurrentUser());
-        }
+
+    /**
+     * Activity for creating a new account
+     */
+    public void createAccount() {
+        startActivity(new Intent(Login.this,SignUp.class));
     }
 
     /**
@@ -76,18 +75,18 @@ public class Login extends BaseActivity implements View.OnClickListener {
         if (!validateForm()) {
             return;
         }
-        showProgressDialog();
+        //showProgressDialog();
 
         // Initialize the email and password variables from the fields entered by the user
-        String email = mEmailField.getText().toString();
-        String password = mPasswordField.getText().toString();
+        String email = mEmail.getText().toString();
+        String password = mPassword.getText().toString();
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
-                        hideProgressDialog();
+                        //hideProgressDialog();
 
                         if (task.isSuccessful()) {
                             onAuthSuccess(task.getResult().getUser());
@@ -107,18 +106,18 @@ public class Login extends BaseActivity implements View.OnClickListener {
         if (!validateForm()) {
             return;
         }
-        showProgressDialog();
+        //showProgressDialog();
 
         // Initialize the email and password variables
-        String email = mEmailField.getText().toString();
-        String password = mPasswordField.getText().toString();
+        String email = mEmail.getText().toString();
+        String password = mPassword.getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
-                        hideProgressDialog();
+                        //hideProgressDialog();
 
                         if (task.isSuccessful()) {
                             onAuthSuccess(task.getResult().getUser());
@@ -167,18 +166,18 @@ public class Login extends BaseActivity implements View.OnClickListener {
     private boolean validateForm() {
         boolean valid = true;
 
-        if (TextUtils.isEmpty(mEmailField.getText().toString())) {
-            mEmailField.setError("Required.");
+        if (TextUtils.isEmpty(mEmail.getText().toString())) {
+            mEmail.setError("Required.");
             valid = false;
         } else {
-            mEmailField.setError(null);
+            mEmail.setError(null);
         }
 
-        if (TextUtils.isEmpty(mPasswordField.getText().toString())) {
-            mPasswordField.setError("Required.");
+        if (TextUtils.isEmpty(mPassword.getText().toString())) {
+            mPassword.setError("Required.");
             valid = false;
         } else {
-            mPasswordField.setError(null);
+            mPassword.setError(null);
         }
 
         return valid;
