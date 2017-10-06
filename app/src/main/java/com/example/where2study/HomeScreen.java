@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class HomeScreen extends BaseActivity {
+public class HomeScreen extends AppCompatActivity{
 
     //UI Elements
     private Button mSignIn, mSignUp, mAbout;
@@ -17,21 +17,24 @@ public class HomeScreen extends BaseActivity {
         setContentView(R.layout.activity_homescreen);
 
         //Set up the buttons on the homescreen
-        mSignIn=findViewById(R.id.sign_in);
-        mSignUp=findViewById(R.id.sign_up);
+        mSignIn=findViewById(R.id.home_sign_in_button);
+        mSignIn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent signin = new Intent(view.getContext(), Login.class);
+                view.getContext().startActivity(signin);
+            }
+        });
+        mSignUp=findViewById(R.id.home_sign_up_button);
         mAbout=findViewById(R.id.about);
 
     }
 
-    // When the user hits the sign in button on the homescreen
-    public void loadSignIn (View v) {
-        Intent signin = new Intent(HomeScreen.this, Login.class);
-        startActivity(signin);
-    }
 
     // When the user hits the New User button on the homescreen
     public void loadNewUser(View v) {
         Intent newUser = new Intent(HomeScreen.this, SignUp.class);
-        startActivity(newUser);
+        HomeScreen.this.startActivity(newUser);
+        HomeScreen.this.finish();
     }
+
 }

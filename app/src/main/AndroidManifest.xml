@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -35,14 +36,12 @@
         </activity>
         <activity
             android:name=".Login"
+            android:label="Login"
             android:parentActivityName=".HomeScreen" />
         <activity
             android:name=".SignUp"
+            android:label="SignUp"
             android:parentActivityName=".HomeScreen" />
-        <activity
-            android:name=".BaseActivity"
-            android:label="@string/title_activity_base"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"

@@ -30,14 +30,14 @@
 
 
     <Button
-        android:id="@+id/sign_in"
+        android:id="@+id/home_sign_in_button"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:onClick="loadSignIn"
+
         android:text="@string/action_sign_in" />
 
     <Button
-        android:id="@+id/sign_up"
+        android:id="@+id/home_sign_up_button"
         android:onClick="loadNewUser"
         android:layout_width="wrap_content"
         android:layout_height="50dp"

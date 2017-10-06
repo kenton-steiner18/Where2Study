@@ -32,13 +32,13 @@
             android:hint="Enter password"
             android:inputType="textPassword" />
         <Button
-        android:id="@+id/button_sign_in"
+        android:id="@+id/login_page_button_sign_in"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
         android:text="Sign In" />
         <Button
-            android:id="@+id/CreateAccount"
+            android:id="@+id/login_page_CreateAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"

@@ -52,8 +52,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
         mEmail = findViewById(R.id.editTextEmail);
         mPassword = findViewById(R.id.editTextPassword);
         progressDialog= new ProgressDialog(this);
-        mSignIn = findViewById(R.id.sign_in);
-        mSignUp = findViewById(R.id.sign_up);
+        mSignIn = findViewById(R.id.login_page_button_sign_in);
+        mSignUp = findViewById(R.id.login_page_CreateAccount);
 
         //Get Firebase auth instance
         mAuth = FirebaseAuth.getInstance();
