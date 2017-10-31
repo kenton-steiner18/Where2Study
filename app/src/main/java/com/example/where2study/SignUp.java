@@ -17,13 +17,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
-public class SignUp extends AppCompatActivity {
+public class SignUp extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     private static final String TAG = "SignUp";
     //defining view objects
@@ -36,6 +46,8 @@ public class SignUp extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener authchange;
     private Boolean mAllowNavigation = true;
     private FirebaseAuth auth;
+    private static final int RC_SIGN_IN = 9001;
+    public GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +63,19 @@ public class SignUp extends AppCompatActivity {
         passwordField = findViewById(R.id.password_field);
         user_name = findViewById(R.id.name_field);
         Button bSignUp = findViewById(R.id.sign_up_create_account);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
 
+        SignInButton signInButton = findViewById(R.id.sign_in_button);
+        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        findViewById(R.id.sign_in_button).setOnClickListener(this);
         bSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -156,6 +179,87 @@ public class SignUp extends AppCompatActivity {
                             progressDialog.dismiss();
                         }
                     });
+        }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                Log.d(TAG, "The login was: " + result.isSuccess());
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = result.getSignInAccount();
+                Log.d(TAG, "Current User: " + account.getDisplayName());
+                firebaseAuthWithGoogle(account);
+            } else {
+                // Google Sign In failed, update UI appropriately
+                // ...
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = auth.getCurrentUser();
+                            updateUI(user);
+                        } else {
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            updateUI(null);
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
+    public void googleSignIn() {
+        mGoogleApiClient.clearDefaultAccountAndReconnect();
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+        Log.d(TAG, "Here is the connection from Login: " +  mGoogleApiClient.isConnected());
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.sign_in_button:
+                googleSignIn();
+                break;
+        }
+    }
+
+    // Update User Interface upon successful sign in with Google
+    private void updateUI(FirebaseUser currentUser) {
+        if (currentUser != null) {
+            Log.d(TAG, "this wasn't null");
+            Log.d(TAG, currentUser.getDisplayName());
+            Log.d(TAG, currentUser.getEmail());
+            Log.d(TAG, currentUser.getUid());
+            Intent i = new Intent(SignUp.this, MainActivity.class);
+            i.putExtra("username", currentUser.getDisplayName());
+            i.putExtra("id", currentUser.getUid());
+            i.putExtra("email", currentUser.getEmail());
+            startActivity(i);
         }
     }
 

@@ -11,9 +11,9 @@
     tools:context="com.example.where2study.Login">
 
     <LinearLayout
-        android:layout_centerVertical="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:orientation="vertical">
 
         <EditText
@@ -31,20 +31,29 @@
             android:layout_margin="15dp"
             android:hint="Enter password"
             android:inputType="textPassword" />
+
         <Button
-        android:id="@+id/login_page_button_sign_in"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:text="Sign In" />
+            android:id="@+id/login_page_button_sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_marginBottom="0dp"
+            android:text="Sign In" />
+
         <Button
             android:id="@+id/login_page_CreateAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
+            android:layout_marginTop="0dp"
             android:onClick="createAccount"
             android:text="Create Account" />
 
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
 
 
     </LinearLayout>

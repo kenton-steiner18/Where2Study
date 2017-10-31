@@ -3,6 +3,7 @@ package com.example.where2study;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -35,6 +36,12 @@ public class HomeScreen extends AppCompatActivity{
         Intent newUser = new Intent(HomeScreen.this, SignUp.class);
         HomeScreen.this.startActivity(newUser);
         HomeScreen.this.finish();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d("HOME", "onResume method in effect");
     }
 
 }
