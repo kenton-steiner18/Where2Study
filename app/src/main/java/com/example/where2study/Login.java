@@ -134,7 +134,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(Login.this, "Successfully Registered!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, "Successfully Signed In!", Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
                             updateUI(user);
                         } else {
@@ -241,7 +241,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
     private void updateUI(FirebaseUser currentUser) {
         if (currentUser != null) {
-            Log.d(TAG, "this wasn't null");
+            Log.d(TAG, "User is logged in");
             Log.d(TAG, currentUser.getDisplayName());
             Log.d(TAG, currentUser.getEmail());
             Log.d(TAG, currentUser.getUid());
