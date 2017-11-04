@@ -6,33 +6,29 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_profile"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Profile" />
+            android:title="@string/nav_profile" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_gmaps"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Study Locations" />
+            android:title="@string/nav_google_maps" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Message Board" />
+            android:title="@string/nav_board" />
         <item
             android:id="@+id/app_bar_search"
             android:icon="@drawable/ic_search_black_24dp"
-            android:title="Search" />
+            android:title="@string/nav_locations" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Settings" />
-        <item
-            android:id="@+id/nav_share"
-            android:icon="@drawable/ic_menu_share"
-            android:title="Friends" />
+            android:title="@string/nav_settings" />
         <item
             android:id="@+id/nav_signout"
             android:icon="@drawable/ic_error_black"
-            android:title="Sign Out" />
+            android:title="@string/action_sign_out" />
 
-</group>
+    </group>
 </menu>

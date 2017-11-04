@@ -2,6 +2,7 @@ package com.example.where2study;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 
@@ -42,30 +43,24 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     private static final String TAG = "Login";
 
     // Declare instance of Firebase Authentication
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static final int RC_SIGN_IN = 9001;
     public GoogleApiClient mGoogleApiClient;
 
-
-    //Firebase Database Instance
-    private DatabaseReference mDatabase;
-
     // UI references.
     private EditText mEmail, mPassword;
-    private Button mSignIn, mSignUp;
     private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_login);
 
 
         // Set up the login form.
-        mEmail = findViewById(R.id.editTextEmail);
-        mPassword = findViewById(R.id.editTextPassword);
+        mEmail = findViewById(R.id.input_email);
+        mPassword = findViewById(R.id.input_password);
         progressDialog= new ProgressDialog(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -77,26 +72,29 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         Log.d(TAG, "Building new Session in login activity");
-        mSignIn = findViewById(R.id.login_page_button_sign_in);
-        mSignUp = findViewById(R.id.login_page_CreateAccount);
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         TextView textView = (TextView) signInButton.getChildAt(0);
-        textView.setText("Sign In with Google");
+        textView.setText(R.string.action_google_sign_in);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-
-        mSignIn.setOnClickListener(this);
-        mSignUp.setOnClickListener(this);
+        findViewById(R.id.btn_login).setOnClickListener(this);
+        findViewById(R.id.link_signup).setOnClickListener(this);
     }
 
 
     @Override
     public void onStart() {
+
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        Log.d(TAG, "Current User: " + mAuth);
-        if(mAuth != null){
+        Log.d(TAG, "Current account: " + mAuth);
+        if (mAuth.getCurrentUser() != null) {
             FirebaseUser currentUser = mAuth.getCurrentUser();
+            SharedPreferences settings = getSharedPreferences("UserInfo", 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("username", currentUser.getDisplayName());
+            editor.putString("email", currentUser.getEmail());
+            editor.putString("userid", currentUser.getUid());
+            editor.commit();
             updateUI(currentUser);
         }
     }
@@ -166,10 +164,10 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.login_page_button_sign_in:
+            case R.id.btn_login:
                 emailSignIn();
                 break;
-            case R.id.login_page_CreateAccount:
+            case R.id.link_signup:
                 createAccount(v);
                 break;
             case R.id.sign_in_button:
@@ -235,20 +233,30 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
         //Go to home screen for logged in users
         startActivity(new Intent(this, MainActivity.class));
+        SharedPreferences settings = getSharedPreferences("UserInfo", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("username", user.getDisplayName());
+        editor.putString("email", user.getEmail());
+        editor.putString("userid", user.getUid());
+        editor.commit();
         finish();
     }
 
 
     private void updateUI(FirebaseUser currentUser) {
+        Log.d(TAG, "Current user " + currentUser);
         if (currentUser != null) {
             Log.d(TAG, "User is logged in");
-            Log.d(TAG, currentUser.getDisplayName());
-            Log.d(TAG, currentUser.getEmail());
-            Log.d(TAG, currentUser.getUid());
+            //Log.d(TAG, currentUser.getDisplayName());
+            //Log.d(TAG, currentUser.getEmail());
+            //Log.d(TAG, currentUser.getUid());
             Intent i = new Intent(Login.this, MainActivity.class);
-            i.putExtra("username", currentUser.getDisplayName());
-            i.putExtra("id", currentUser.getUid());
-            i.putExtra("email", currentUser.getEmail());
+            SharedPreferences settings = getSharedPreferences("UserInfo", 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("username", currentUser.getDisplayName());
+            editor.putString("email", currentUser.getEmail());
+            editor.putString("userid", currentUser.getUid());
+            editor.commit();
             startActivity(i);
         }
     }
