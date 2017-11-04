@@ -53,6 +53,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.where2study.MainActivity" />
         </activity>
+        <activity android:name=".NewPost"></activity>
     </application>
 
 </manifest>
