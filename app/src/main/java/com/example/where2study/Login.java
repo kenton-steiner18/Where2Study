@@ -23,8 +23,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -32,7 +30,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DatabaseReference;
 
 /**
  * A login screen that offers login via email/password.
@@ -84,7 +81,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
     @Override
     public void onStart() {
-
         super.onStart();
         Log.d(TAG, "Current account: " + mAuth);
         if (mAuth.getCurrentUser() != null) {
@@ -116,14 +112,14 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                 firebaseAuthWithGoogle(account);
             } else {
                 // Google Sign In failed, update UI appropriately
-                // ...
+                Toast.makeText(Login.this, "Login Failed!", Toast.LENGTH_SHORT).show();
+                updateUI(null);
             }
         }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -141,8 +137,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                             progressDialog.dismiss();
                             updateUI(null);
                         }
-
-                        // ...
                     }
                 });
     }
@@ -181,7 +175,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
      */
     public void createAccount(View v) {
         startActivity(new Intent(Login.this,SignUp.class));
-        Login.this.finish();
+        finish();
     }
 
     /**
@@ -258,6 +252,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             editor.putString("userid", currentUser.getUid());
             editor.commit();
             startActivity(i);
+            finish();
         }
     }
     }

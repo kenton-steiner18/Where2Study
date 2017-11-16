@@ -13,17 +13,9 @@
             android:icon="@drawable/ic_map_marker"
             android:title="@string/nav_google_maps" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/nav_board" />
-        <item
             android:id="@+id/app_bar_search"
             android:icon="@drawable/ic_search_black_24dp"
             android:title="@string/nav_locations" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/nav_settings" />
         <item
             android:id="@+id/nav_signout"
             android:icon="@drawable/ic_error_black"

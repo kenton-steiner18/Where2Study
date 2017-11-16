@@ -1,5 +1,6 @@
 package com.example.where2study;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,11 +15,14 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +31,7 @@ import com.example.where2study.Objects.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,37 +40,41 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ItemClickListener {
 
     private FirebaseAuth mAuth;
+    private ProgressDialog databaseProgress;
+    private ProgressDialog signOutProgress;
 
     private static final String TAG = "MAINACTIVITY";
-    private DatabaseReference mDatabase;
 
     private String username, email, userid, currentLatitude, currentLongitude;
     public GoogleApiClient mGoogleApiClient;
     public Location mLastLocation;
 
-    public User user;
 
-    public ArrayList<Post> MessageBoard = new ArrayList<>();
+    public User user;
+    final private List<Post> mPosts = new ArrayList<>();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-
+        databaseProgress = new ProgressDialog(MainActivity.this);
+        databaseProgress.setMessage("Loading posts...");
+        databaseProgress.show();
 
         SharedPreferences settings = getSharedPreferences("UserInfo", 0);
         userid = settings.getString("userid", "");
         username = settings.getString("username", "");
         email = settings.getString("email", "");
 
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = mDatabase.getReference("user");
+        FirebaseDatabase userRef = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = userRef.getReference("user");
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -73,12 +82,13 @@ public class MainActivity extends AppCompatActivity
                 if (!snapshot.hasChild(userid)) {
                     user = new User(username, email, userid);
                     myRef.child(userid).setValue(user);
-                    Log.d(TAG, "New database reference created");
+                    Log.d(TAG, "jdiwsjf" + userid);
 
                 } else {
                     User.userid = userid;
                     User.email = email;
                     User.username = username;
+                    Log.d(TAG, "asdfwers: " + userid + "");
                 }
 
             }
@@ -116,6 +126,55 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        DatabaseReference listofposts = FirebaseDatabase.getInstance().getReference().child("posts");
+        Log.d(TAG, "REFERENCE: " + listofposts.toString());
+        final PostArrayAdapter adapter = new PostArrayAdapter(this, mPosts);
+        listofposts.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "CHILDREN COUNT:" + dataSnapshot.getChildrenCount());
+                for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
+                    Post note = noteSnapshot.getValue(Post.class);
+                    mPosts.add(note);
+                    Log.d("ASDF", mPosts.toString());
+                    adapter.notifyDataSetChanged();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, databaseError.getMessage());
+            }
+        });
+
+        RecyclerView postBoard = (RecyclerView) findViewById(R.id.post_board_view);
+        postBoard.setLayoutManager(new LinearLayoutManager(this));
+        // Create adapter passing in the sample user data
+        // Attach the adapter to the recyclerview to populate items
+        postBoard.setAdapter(adapter);
+        databaseProgress.dismiss();
+        adapter.setClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        final Post post = mPosts.get(position);
+        Intent i = new Intent(this, ViewPost.class);
+        SharedPreferences postinfo = getSharedPreferences("postinfo", 0);
+        SharedPreferences.Editor editor = postinfo.edit();
+        editor.putString("postid", post.getPostid());
+        editor.putString("userid", post.getUser());
+        editor.putString("classname", post.getClassName());
+        editor.putString("location", post.getLocation());
+        editor.putString("starttime", post.getTheTime());
+        editor.putString("endtime", post.getEndTime());
+        editor.putString("description", post.getDescription());
+        editor.putInt("numseats", post.getSeats());
+        editor.commit();
+        //Log.i(TAG, post.getPostid());
+        startActivity(i);
     }
 
     @Override
@@ -176,8 +235,12 @@ public class MainActivity extends AppCompatActivity
     public void signOut() {
 
         // Firebase sign out
+        signOutProgress = new ProgressDialog(MainActivity.this);
+        signOutProgress.setMessage("Signing Out");
+        signOutProgress.show();
         mAuth.signOut();
         Toast.makeText(MainActivity.this, "Successfully Logged Out!", Toast.LENGTH_SHORT).show();
+        signOutProgress.dismiss();
         startActivity(new Intent(MainActivity.this, Login.class));
         MainActivity.this.finish();
 

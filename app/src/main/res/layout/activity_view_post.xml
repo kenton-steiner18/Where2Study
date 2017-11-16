@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.where2study.ViewPost">
+
+    <TextView
+        android:id="@+id/starttimelabel"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="40dp"
+        android:text="@string/start_time"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/starttimevalue"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/endtimelabel"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="80dp"
+        android:text="@string/end_time"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/endtimevalue"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/starttimevalue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/starttimelabel" />
+
+    <TextView
+        android:id="@+id/endtimevalue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/endtimelabel" />
+
+    <TextView
+        android:id="@+id/descriptionlabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/description"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/numseatsvalue" />
+
+    <TextView
+        android:id="@+id/classnamelabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/class_name"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/starttimevalue" />
+
+    <TextView
+        android:id="@+id/classnamevalue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/classnamelabel" />
+
+    <TextView
+        android:id="@+id/locationlabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/location"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/endtimevalue" />
+
+    <TextView
+        android:id="@+id/locationvalue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/locationlabel" />
+
+    <TextView
+        android:id="@+id/numseatslabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/seats"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/classnamevalue" />
+
+    <TextView
+        android:id="@+id/numseatsvalue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/numseatslabel" />
+
+    <TextView
+        android:id="@+id/useridlabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/prompt_name"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/locationvalue" />
+
+    <TextView
+        android:id="@+id/useridvalue"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/useridlabel" />
+
+    <TextView
+        android:id="@+id/descriptionvalue"
+        android:layout_width="311dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionlabel" />
+</android.support.constraint.ConstraintLayout>
