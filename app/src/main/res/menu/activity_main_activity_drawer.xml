@@ -13,10 +13,6 @@
             android:icon="@drawable/ic_map_marker"
             android:title="@string/nav_google_maps" />
         <item
-            android:id="@+id/app_bar_search"
-            android:icon="@drawable/ic_search_black_24dp"
-            android:title="@string/nav_locations" />
-        <item
             android:id="@+id/nav_signout"
             android:icon="@drawable/ic_error_black"
             android:title="@string/action_sign_out" />

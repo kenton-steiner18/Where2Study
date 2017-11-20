@@ -21,13 +21,9 @@ import com.google.firebase.auth.FirebaseUser;
 public class SplashScreen extends Activity {
 
     private final String TAG = "SPLASHSCREEN";
-    private final int SPLASH_DISPLAY_LENGTH = 2000;
-
+    private static final int SPLASH_DISPLAY_LENGTH = 1500;
     private FirebaseAuth auth;
-
-    private String name;
-    private String id;
-    private String email;
+    private String name, id, email;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,20 +31,16 @@ public class SplashScreen extends Activity {
         super.onCreate(savedInstanceState);
         auth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_splash_screen);
-        Log.d("HEYTHISISTHING", "" + hasNetworkConnection());
-        if (auth.getCurrentUser() == null || !hasNetworkConnection()) {
-            //Start the HomeScreen activity if the user is not logged in
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run () {
-                    startActivity(new Intent(SplashScreen.this, Login.class));
-                    finish();
-                }
-            }, SPLASH_DISPLAY_LENGTH);
-        } else {
-            if (!hasNetworkConnection()) {
-
-
+            if (auth.getCurrentUser() == null) {
+                //Start the HomeScreen activity if the user is not logged in
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(SplashScreen.this, Login.class));
+                        finish();
+                    }
+                }, SPLASH_DISPLAY_LENGTH);
+            } else {
                 //Start the main activity  if the user is logged in
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -57,9 +49,7 @@ public class SplashScreen extends Activity {
                         email = currentUser.getEmail();
                         id = currentUser.getUid();
                         name = currentUser.getDisplayName();
-                        Log.d(TAG, "User is logged in");
-                        Intent i = new Intent(SplashScreen.this, MainActivity.class);
-                        Log.d(TAG, name);
+                        Log.d(TAG, "Current User: " + name);
                         Log.d(TAG, email);
                         Log.d(TAG, id);
                         SharedPreferences settings = getSharedPreferences("UserInfo", 0);
@@ -68,41 +58,18 @@ public class SplashScreen extends Activity {
                         editor.putString("email", email);
                         editor.putString("userid", id);
                         editor.commit();
-                        startActivity(i);
+                        startActivity(new Intent(SplashScreen.this, MainActivity.class));
                         finish();
-
                     }
                 }, SPLASH_DISPLAY_LENGTH);
-            } else {
-                    AlertDialog.Builder noConnection = new AlertDialog.Builder(getApplicationContext());
-
-                    noConnection.setTitle("Info");
-                    noConnection.setMessage("Your device is not connected to the internet.  Connect to a Network");
-                    noConnection.setIcon(android.R.drawable.ic_dialog_alert);
-                noConnection.setPositiveButton(R.string.nav_settings, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                    }
-                });
-                noConnection.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        startActivity(new Intent(SplashScreen.this, Login.class));
-                        finish();
-                    }
-                });
-
-                noConnection.show();
-
             }
-        }
-        
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
         Log.d(TAG, "Starting the SplashScreen activity");
+
     }
 
     @Override
@@ -127,22 +94,5 @@ public class SplashScreen extends Activity {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "SplashScreen activity has been destroyed");
-    }
-
-    private boolean hasNetworkConnection() {
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo =
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        boolean isConnected = true;
-        boolean isWifiAvailable = networkInfo.isAvailable();
-        boolean isWifiConnected = networkInfo.isConnected();
-        networkInfo =
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        boolean isMobileAvailable = networkInfo.isAvailable();
-        boolean isMobileConnnected = networkInfo.isConnected();
-        isConnected = (isMobileAvailable&&isMobileConnnected) ||
-                (isWifiAvailable&&isWifiConnected);
-        return(isConnected);
     }
 }

@@ -1,7 +1,12 @@
 package com.example.where2study;
 
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -62,9 +67,13 @@ public class NewPost extends AppCompatActivity implements View.OnClickListener{
                 finish();
                 break;
             case R.id.create_post:
-                savePost();
-                startActivity(new Intent(NewPost.this, MainActivity.class));
-                finish();
+                if (hasNetworkConnection()) {
+                    savePost();
+                    startActivity(new Intent(NewPost.this, MainActivity.class));
+                    finish();
+                } else {
+                    showDialog();
+                }
                 break;
         }
     }
@@ -84,63 +93,45 @@ public class NewPost extends AppCompatActivity implements View.OnClickListener{
         mDatabase.child(postId).setValue(current);
     }
 
-    /*public void setStudyLocation() {
+    /**
+     * Determines if the current device has a network connection
+     * @return - true or false, if the device is connected to a network
+     */
+    private boolean hasNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
 
-        try {
-            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(this);
-            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
-        } catch (GooglePlayServicesRepairableException e) {
-            GoogleApiAvailability.getInstance().getErrorDialog(this, e.getConnectionStatusCode(),
-                    0 *//* requestCode *//*).show();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            String message = "Google Play Services is not available: " +
-                    GoogleApiAvailability.getInstance().getErrorString(e.errorCode);
-
-            Log.e(TAG, message);
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
         }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
-    *//**
-     * Called after the autocomplete activity has finished to return its result.
-     *//*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Check that the result was from the autocomplete widget.
-        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // Get the user's selected place from the Intent.
-                Place place = PlaceAutocomplete.getPlace(this, data);
-                Log.i(TAG, "Place Selected: " + place.getName());
-
-                // Format the place's details and display them in the TextView.
-                placeDetails.setText(formatPlaceDetails(getResources(), place.getName(),
-                        place.getId(), place.getAddress(), place.getPhoneNumber(),
-                        place.getWebsiteUri()));
-                findViewById(R.id.gmap_location).setVisibility(View.INVISIBLE);
-                findViewById(R.id.place_details).setVisibility(View.VISIBLE);
-            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-                Status status = PlaceAutocomplete.getStatus(this, data);
-                Log.e(TAG, "Error: Status = " + status.toString());
-            } else if (resultCode == RESULT_CANCELED) {
-                // Indicates that the activity closed before a selection was made. For example if
-                // the user pressed the back button.
-            }
-
-        }
+    /**
+     * Show an alert dialog to take the user to the Network settings screen or quit the app
+     */
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("You do not have a network connection.  Connect? ")
+                .setPositiveButton("Connection Settings", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                        NewPost.this.finish();
+                    }
+                })
+                .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        NewPost.this.finish();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
-
-    *//**
-     * Helper method to format information about a place nicely.
-     *//*
-    private static Spanned formatPlaceDetails(Resources res, CharSequence name, String id,
-                                              CharSequence address, CharSequence phoneNumber, Uri websiteUri) {
-        Log.e(TAG, res.getString(R.string.place_details, name, id, address, phoneNumber,
-                websiteUri));
-        return Html.fromHtml(res.getString(R.string.place_details, name, id, address, phoneNumber,
-                websiteUri));
-
-    }*/
 }
